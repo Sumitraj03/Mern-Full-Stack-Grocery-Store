@@ -1,10 +1,11 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "MERN Grocery Store Backend",
   "main": "index.js",
   "scripts": {
-    "dev": " nodemon index.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
   "keywords": [],
   "author": "",
@@ -21,5 +22,8 @@
     "mongoose": "^8.15.1",
     "multer": "^2.0.0",
     "stripe": "^18.1.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
   }
 }
