@@ -3,7 +3,11 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import { connectDB } from "./config/connectDB.js";
+import { connectCloudinary } from "./config/cloudinary.js";
+
+// Load .env variables
 dotenv.config();
+
 import userRoutes from "./routes/user.routes.js";
 import sellerRoutes from "./routes/seller.routes.js";
 import productRoutes from "./routes/product.routes.js";
@@ -11,19 +15,20 @@ import cartRoutes from "./routes/cart.routes.js";
 import addressRoutes from "./routes/address.routes.js";
 import orderRoutes from "./routes/order.routes.js";
 
-import { connectCloudinary } from "./config/cloudinary.js";
-
 const app = express();
 
+// Connect Cloudinary before starting server
 await connectCloudinary();
+
 // allow multiple origins
-const allowedOrigins = ["http://localhost:5173"];
-//middlewares
+const allowedOrigins = ["http://localhost:5173"]; // You can add your deployed frontend URL later
+
+// Middlewares
 app.use(cors({ origin: allowedOrigins, credentials: true }));
 app.use(cookieParser());
 app.use(express.json());
 
-// Api endpoints
+// Static & API Routes
 app.use("/images", express.static("uploads"));
 app.use("/api/user", userRoutes);
 app.use("/api/seller", sellerRoutes);
@@ -32,8 +37,9 @@ app.use("/api/cart", cartRoutes);
 app.use("/api/address", addressRoutes);
 app.use("/api/order", orderRoutes);
 
+// ✅ FIXED: only one PORT declaration
 const PORT = process.env.PORT || 5000;
+
 app.listen(PORT, () => {
-  connectDB();
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`✅ Server running on port ${PORT}`);
 });
