@@ -20,8 +20,8 @@ const app = express();
 
 // Allowed CORS origins (local + deployed frontend)
 const allowedOrigins = [
-  "http://localhost:5173",                     // local dev
-  "https://your-frontend.onrender.com"         // replace with your deployed frontend URL
+  "http://localhost:5173",               // local dev
+  "https://your-frontend.onrender.com"   // replace with your deployed frontend URL
 ];
 
 // Middlewares
@@ -37,6 +37,11 @@ app.use("/api/product", productRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/address", addressRoutes);
 app.use("/api/order", orderRoutes);
+
+// ✅ Root route just for testing backend is live
+app.get("/", (req, res) => {
+  res.send("✅ Backend is running successfully!");
+});
 
 // Start server after DB & Cloudinary are connected
 const startServer = async () => {
