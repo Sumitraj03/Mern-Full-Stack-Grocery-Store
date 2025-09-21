@@ -5,9 +5,10 @@ import dotenv from "dotenv";
 import { connectDB } from "./config/connectDB.js";
 import { connectCloudinary } from "./config/cloudinary.js";
 
-// Load .env variables
+// Load environment variables
 dotenv.config();
 
+// Import routes
 import userRoutes from "./routes/user.routes.js";
 import sellerRoutes from "./routes/seller.routes.js";
 import productRoutes from "./routes/product.routes.js";
@@ -17,18 +18,18 @@ import orderRoutes from "./routes/order.routes.js";
 
 const app = express();
 
-// Connect Cloudinary before starting server
-await connectCloudinary();
-
-// allow multiple origins
-const allowedOrigins = ["http://localhost:5173"]; // You can add your deployed frontend URL later
+// Allowed CORS origins (local + deployed frontend)
+const allowedOrigins = [
+  "http://localhost:5173",                     // local dev
+  "https://your-frontend.onrender.com"         // replace with your deployed frontend URL
+];
 
 // Middlewares
 app.use(cors({ origin: allowedOrigins, credentials: true }));
 app.use(cookieParser());
 app.use(express.json());
 
-// Static & API Routes
+// Static files & API Routes
 app.use("/images", express.static("uploads"));
 app.use("/api/user", userRoutes);
 app.use("/api/seller", sellerRoutes);
@@ -37,9 +38,20 @@ app.use("/api/cart", cartRoutes);
 app.use("/api/address", addressRoutes);
 app.use("/api/order", orderRoutes);
 
-// ✅ FIXED: only one PORT declaration
-const PORT = process.env.PORT || 5000;
+// Start server after DB & Cloudinary are connected
+const startServer = async () => {
+  try {
+    await connectDB();          // Connect MongoDB
+    await connectCloudinary();  // Connect Cloudinary
 
-app.listen(PORT, () => {
-  console.log(`✅ Server running on port ${PORT}`);
-});
+    const PORT = process.env.PORT || 5000;
+    app.listen(PORT, () => {
+      console.log(`✅ Server running on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error("❌ Server startup failed:", error.message);
+    process.exit(1); // stop process if DB connection fails
+  }
+};
+
+startServer();
